@@ -298,3 +298,172 @@ fn main() {
 5
 <略>
 ```
+### P73
+Ruby
+```ruby
+dog, cat = 100, 200
+print("dog is #{dog}, cat is #{cat}")
+```
+```bash
+╰─ ruby let_error.rb 
+dog is 100, cat is 200%   
+```
+Rust
+```rust
+fn main() {
+    let dog = 100;
+    let cat = 200;
+    println!("dog is {}, cat is {}", dog, cat);
+}
+```
+```bash
+╰─ ./let_test 
+dog is 100, cat is 200
+```
+### P75
+Rust
+```rust
+fn main() {
+    let pc_price = 98000.0;
+    let shipping_fee_a = 1200.0;
+    let a_rate = 0.2;
+    let b_rate = 0.1;
+
+    println!("A社={}円", pc_price * (1.0 - a_rate) + shipping_fee_a);
+    println!("B社={}円", pc_price * (1.0 - b_rate));
+}
+```
+```bash
+╰─ ./kaimono       
+A社=79600円
+B社=88200円
+```
+### P79
+Ruby
+```ruby
+(0..10).each do |x|
+  (0..3).each do |y|
+    (0..10).each do |z|
+      cost = 500 * x + 100 * y + 50 * z
+      next if cost != 3950
+      puts("500円x#{x} + 100円x#{y} + 50円x#{z}=#{cost}")
+    end
+  end
+end
+```
+```bash
+╰─ ruby coin.rb
+500円x7 + 100円x0 + 50円x9=3950
+500円x7 + 100円x1 + 50円x7=3950
+500円x7 + 100円x2 + 50円x5=3950
+500円x7 + 100円x3 + 50円x3=3950
+```
+Rust
+```rust
+fn main() {
+    for x in 0..11 {
+        for y in 0..4 {
+            for z in 0..11 {
+                let cost = 500 * x + 100 * y + 50 * z;
+                if cost == 3950 {
+                    println!("500円x{} + 100円x{} + 50円x{} = {}", x, y, z, cost);
+                }
+            }
+        }
+    }
+}
+```
+```bash
+╰─ ./coin 
+500円x7 + 100円x0 + 50円x9 = 3950
+500円x7 + 100円x1 + 50円x7 = 3950
+500円x7 + 100円x2 + 50円x5 = 3950
+500円x7 + 100円x3 + 50円x3 = 3950
+```
+### P88 ~ 89
+```ruby
+def encrypt(text, shift)
+def encrypt(text, shift)
+  a_code = 'A'.ord
+  z_code = 'Z'.ord
+  text.split('').each_with_object("") do |c, res|
+    if (a_code..z_code) === c.ord
+      res << (((c.ord - a_code + shift) % 26) + a_code).chr
+      next
+    end
+    res << c
+  end
+end
+
+enc = encrypt("I LOVE YOU", 3)
+dec = encrypt(enc, -3)
+puts("#{enc} => #{dec}")
+```
+```bash
+╰─ ruby ./ceaser.enc.rb
+L ORYH BRX => I LOVE YOU
+```
+Rust
+* 文字列リテラル -> 型&str
+* 型変換 let <変数名> = 変数 as 型;
+```rust
+fn encrypt(text: &str, shift: i16) -> String {
+    let a_code = 'A' as i16;
+    let z_code = 'Z' as i16;
+
+    let mut res = String::new();
+    for ch in text.chars() {
+        let mut code = ch as i16;
+        if a_code <= code && code <= z_code {
+            code = (code - a_code + shift + 26) % 26 + a_code;
+        }
+        res.push((code as u8) as char);
+    }
+    return res;
+}
+
+fn main() {
+    let enc = encrypt("I LOVE YOU", 3);
+    let dec = encrypt(&enc, -3);
+    println!("{} => {}", enc, dec);
+}
+```
+```bash
+╰─ ./ceasar_enc 
+L ORYH BRX => I LOVE YOU
+```
+### P99 ~ 100
+* usize 符号なし整数で環境毎にサイズが異なる。
+* `&` 値の参照。
+  * `&mut` 可変な参照。
+* 配列の初期化。 `[初期値; 配列要素数]`
+
+Rust
+```rust
+fn is_prime(n: usize) -> bool {
+    for i in 2..n {
+        if n % i == 0 {
+            return false
+        }
+    }
+    return true
+}
+
+fn get_primes(primes: &mut[usize; 100]) {
+    let mut i = 2;
+    let mut count = 0;
+    while count < 100 {
+        if is_prime(i) {
+            primes[count] = i;
+            count += 1;
+        }
+        i += 1;
+    }
+}
+
+fn main() {
+    let mut primes = [0; 100];
+    get_primes(&mut primes);
+    println!("{:?}", primes);
+}
+```
